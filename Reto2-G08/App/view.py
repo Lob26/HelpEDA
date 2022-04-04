@@ -1,4 +1,4 @@
-﻿"""
+"""
  * Copyright 2020, Departamento de sistemas y Computación, Universidad
  * de Los Andes
  *
@@ -20,11 +20,12 @@
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
 
-import config as cf
 import sys
+import config as cf
 import controller
 from DISClib.ADT import list as lt
 assert cf
+from time import process_time
 
 
 """
@@ -40,6 +41,9 @@ def printMenu():
     print("2- ")
 
 catalog = None
+filePrefix = ("spotify-albums-utf8", "spotify-artists-utf8" , "spotify-tracks-utf8")
+fileSize = ("-small", "-large", "-5pct", "-10pct", "-20pct", "-30pct", "-50pct", "-80pct")
+file = [[f'{prefix}{size}' for prefix in filePrefix] for size in fileSize]
 
 """
 Menu principal
@@ -48,7 +52,12 @@ while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
-        print("Cargando información de los archivos ....")
+				print("Cargando información de los archivos ....")
+				t1Start = process_time()
+				catalog = controller.initCatalogo()
+				controller.loadCatalog(file[0], catalog)
+				t1End = process_time()
+				print ("\nTiempo de ejecucion:", t1_stop-t1_start,"segundos")
 
     elif int(inputs[0]) == 2:
         pass

@@ -1,4 +1,4 @@
-﻿"""
+"""
  * Copyright 2020, Departamento de sistemas y Computación,
  * Universidad de Los Andes
  *
@@ -29,10 +29,17 @@ import csv
 El controlador se encarga de mediar entre la vista y el modelo.
 """
 
-# Inicialización del Catálogo de libros
+def initCatalog():
+	catalog = model.newCatalog()
+	return catalog
 
-# Funciones para la carga de datos
+def loadCatalog(dataFiles, catalog):
+	albums, artists, tracks = dataFiles
+	loadCSVFile(albums, artists, tracks)
 
-# Funciones de ordenamiento
-
-# Funciones de consulta sobre el catálogo
+def loadCSVFile(albumFile, artistFile, trackFile, sep=",", e = "utf-8-sig"):
+	dialect = csv.excel()
+	dialect.delimiter = sep
+	with open(albumFile, encoding=e) as albumF, open(artistFile, encoding=e) as artistF, open(trackFile, encoding=e) as trackF:
+	
+	
