@@ -38,7 +38,7 @@ operación solicitada
 def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("2- Examinar los albumes en un anio de interes")
 
 catalog = None
 filePrefix = ("spotify-albums-utf8", "spotify-artists-utf8" , "spotify-tracks-utf8")
@@ -60,8 +60,21 @@ while True:
 				print ("\nTiempo de ejecucion:", t1_stop-t1_start,"segundos")
 
     elif int(inputs[0]) == 2:
-        pass
-
+        year = input("Ingrese el anio de interes")
+				if (len(year)!=4):
+					print("Anio incorrecto")
+				else:
+					first(year)
+			elif int(inputs[0] == 3):
+				
     else:
         sys.exit(0)
 sys.exit(0)
+
+def first(year):
+	totalNum, firstMonth, askedAlbums = controller.r1AlbumsByYear(catalog, year)
+	print(f'El numero total de albumes en el anio {year} es: {totalNum}')
+	print(f'El numero de albumes del primer mes de {year} es: {firstMonth}')
+	for i in range(lt.size(askedAlbums)):
+		item = lt.getElement(askedAlbums, i)
+		print(f'Nombre: {item["name"]}, Fecha de publicacion: {item["release_date"]}, Tipo de album: {item["album_type"]}, Artista: {item["artist_album_name"]}, Numero de canciones: {item["total_tracks"]}')

@@ -40,7 +40,9 @@ from json import loads as parseList
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
 los mismos.
 """
-
+#-------------
+#Constructor
+#-------------
 def newCatalog():
 	catalog = {
 		"tracks" = None,
@@ -66,7 +68,7 @@ def newArtist():
 def newAlbum():
 	album = {
 		"name":"",
-		"release_date":"",
+		"release_date":None,
 		"relevant_track_name":"",
 		"tracks_name":lt.newList("ARRAY_LIST"),
 		"artist_album_name":"",
@@ -89,7 +91,9 @@ def newTrack():
 		"href":""
 	}
 	return track
-
+#-------------
+#Loader
+#-------------
 def addArtist(catalog, data:dict):
 	artist = newArtist()
 	artist.update(data)
@@ -99,8 +103,9 @@ def addArtist(catalog, data:dict):
 def addAlbum(catalog, data:dict):
 	album = newAlbum()
 	album.update(data)
-	album["artist_album_name"] = getArtist(data["artist_id"])
-	album["relevant_track_name"] = getTrack(data["track_id"])
+	album["artist_album_name"] = getArtist(catalog, data["artist_id"])
+	album["relevant_track_name"] = getTrack(catalog, data["track_id"])
+	album["release_date"] = cleanDate(date["release_date"], date["release_date_precision"])
 	listMarket = parseList(data["available_markets"])
 	for market in listMarket:
 		lt.addLast(album["market"], market)
@@ -109,12 +114,37 @@ def addAlbum(catalog, data:dict):
 def addTrack(catalog, data:dict):
 	track = newTrack()
 	track.update(data)
-	track["album_name"] = getAlbum(data["album_id"])["name"]
-	lt.addLast(getAlbum(data["album_id"])["tracks_name"], track["name"])
+	track["album_name"] = getAlbum(catalog, data["album_id"])["name"]
+	lt.addLast(getAlbum(catalog, data["album_id"])["tracks_name"], track["name"])
 	listArtists = parseList(data["arist_id"])
 	for artistId in listArtits:
-		artist = getArtist(artistId)
+		artist = getArtist(catalog, artistId)
 		lt.addLast(artist["tracks"], track["name"])
 		lt.addLast(track["artist_names"], artist["name"])
-		
-	
+	mp.put(catalog["tracks"], data["id"], track)
+
+#-------------
+#Helper
+#-------------
+def cleanDate(date:String, precision:String):
+	if(precision=="month"):
+		date+="-01-01"
+	if(precision=="day"):
+		date+="-01"
+	return parseDate(date, "%Y-%m-%d")
+
+#-------------
+#Getters
+#-------------
+def getAlbum(catalog, id:String):
+	return mp.get(catalog["albums"], id)
+
+def getArtist(catalog, id:String):
+	return mp.get(catalog["artists"], id)
+
+def getTrack(catalog, id:String):
+	return mp.get(catalog["tracks"], id)
+
+#-------------
+#Requeriments
+#-------------

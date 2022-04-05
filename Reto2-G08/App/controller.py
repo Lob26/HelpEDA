@@ -28,27 +28,42 @@ import csv
 """
 El controlador se encarga de mediar entre la vista y el modelo.
 """
-
+#-------------
+#	Iniciar catalogo
+#-------------
 def initCatalog():
 	catalog = model.newCatalog()
 	return catalog
 
+#-------------
+# Cargar catalogo
+#-------------
 def loadCatalog(dataFiles, catalog):
 	albums, artists, tracks = dataFiles
-	loadCSVFile(albums, artists, tracks)
+	loadCSVFile(albums, artists, tracks, catalog)
 
-def loadCSVFile(albumFile, artistFile, trackFile, sep=",", e = "utf-8-sig"):
+def loadCSVFile(albumFile, artistFile, trackFile, catalog, sep=",", e = "utf-8-sig"):
 	dialect = csv.excel()
 	dialect.delimiter = sep
 	
 	with open(artistFile, encoding=e) as artistF:
 		bufferArtist = csv.DictReader(artistF, dialect)
+		addArtist(catalog, bufferArtist)
 		
 		
 	with open(albumFile, encoding=e) as albumF:
 		bufferAlbum = csv.DictReader(albumF, dialect)
-
+		addAlbum(catalog, bufferAlbum)
 	
 	with open(trackFile, encoding=e) as trackF:
 		bufferTrack = csv.DictReader(trackF, dialect)
+		addTrack(catalog, bufferTrack)
+
+#-------------
+#Requerimientos
+#-------------
+
+def r1AlbumsByYear(catalog, year:String):
+	return model.examAlbumsInYear(catalog, year)
+	
 		
