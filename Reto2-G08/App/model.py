@@ -162,13 +162,13 @@ def findArtistByPopularity(catalog, popularity):
 def findTracksByPopularity(catalog, popularity):
 	tracks=0
 	threeFirstLast=lt.newList("ARRAY_LIST")
-	return (tracks,threeFirstLast)
+	return (tracks, threeFirstLast)
 
 def findArtistMostPopularTrack(catalog, artist, market):
 	tracksArtistMarket=0
 	albumsArtistMarket=0
 	mostPopular=None
-	return (tracksArtistMarket,albumsArtistMarket)
+	return (tracksArtistMarket, albumsArtistMarket)
 
 def getDiscographyByArtist(catalog, artist):
 	singles=0
@@ -176,7 +176,7 @@ def getDiscographyByArtist(catalog, artist):
 	albums=0
 	threeFirstLast=lt.newList("ARRAY_LIST")
 	mostPopular=None
-	return (singles,compilations,albums,threeFirstLast,mostPopular)
+	return (singles,compilations, albums,threeFirstLast, mostPopular)
 
 def clasifyMostDistributedTracks(catalog, artist, market, number):
 	mostCountedMarket=lt.newList("ARRAY_LIST")

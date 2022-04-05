@@ -65,16 +65,40 @@ while True:
 					print("Anio incorrecto")
 				else:
 					first(year)
-			elif int(inputs[0] == 3):
-				
+		elif int(inputs[0] == 3):
+
+		elif int(inputs[0] == 4):
+
+		elif int(inputs[0] == 5):
+
+		elif int(inputs[0] == 6):
+
+		elif int(inputs[0] == 7):
+		
     else:
         sys.exit(0)
 sys.exit(0)
 
 def first(year):
 	totalNum, firstMonth, askedAlbums = controller.r1AlbumsInYear(catalog, year)
-	#print(f'El numero total de albumes en el anio {year} es: {totalNum}')
-	#print(f'El numero de albumes del primer mes de {year} es: {firstMonth}')
 	for i in range(lt.size(askedAlbums)):
-		item = lt.getElement(askedAlbums, i)
-		#print(f'Nombre: {item["name"]}, Fecha de publicacion: {item["release_date"]}, Tipo de album: {item["album_type"]}, Artista: {item["artist_album_name"]}, Numero de canciones: {item["total_tracks"]}')
+		album = lt.getElement(askedAlbums, i)
+
+def second(popularity):
+	artist, askedArtists = controller.r2ArtistByPopularity(catalog, popularity)
+	for i in range(lt.size(askedArtists)):
+		artist = lt.getElement(askedArtists, i)
+
+def third(popularity):
+	tracks, askedTracks = controller.r3FindTracksByPopularity(catalog, popularity)
+	for i in range(lt.size(askedTracks)):
+		track = lt.getElement(askedTracks, i)
+
+def forth(artistName, market):
+	tracksArtistMarket, albumsArtistMarket = controller.r4TrackMostPopularByArtist(catalog, artistName, market)
+
+def fifth(artistName):
+	singles,compilations,albums,threeFirstLast,mostPopular = controller.r5TracksByArtist()
+
+def sixth(market, artistName, number):
+	mostCountedMarket, threeFirstLast = controller.r6TracksMostDistributedByArtists(catalog, market, artistName, number)
