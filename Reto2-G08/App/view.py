@@ -72,9 +72,9 @@ while True:
 sys.exit(0)
 
 def first(year):
-	totalNum, firstMonth, askedAlbums = controller.r1AlbumsByYear(catalog, year)
-	print(f'El numero total de albumes en el anio {year} es: {totalNum}')
-	print(f'El numero de albumes del primer mes de {year} es: {firstMonth}')
+	totalNum, firstMonth, askedAlbums = controller.r1AlbumsInYear(catalog, year)
+	#print(f'El numero total de albumes en el anio {year} es: {totalNum}')
+	#print(f'El numero de albumes del primer mes de {year} es: {firstMonth}')
 	for i in range(lt.size(askedAlbums)):
 		item = lt.getElement(askedAlbums, i)
-		print(f'Nombre: {item["name"]}, Fecha de publicacion: {item["release_date"]}, Tipo de album: {item["album_type"]}, Artista: {item["artist_album_name"]}, Numero de canciones: {item["total_tracks"]}')
+		#print(f'Nombre: {item["name"]}, Fecha de publicacion: {item["release_date"]}, Tipo de album: {item["album_type"]}, Artista: {item["artist_album_name"]}, Numero de canciones: {item["total_tracks"]}')

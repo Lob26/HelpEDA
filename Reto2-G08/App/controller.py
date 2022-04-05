@@ -23,7 +23,7 @@
 import config as cf
 import model
 import csv
-
+import pycountry as pc
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -50,7 +50,6 @@ def loadCSVFile(albumFile, artistFile, trackFile, catalog, sep=",", e = "utf-8-s
 		bufferArtist = csv.DictReader(artistF, dialect)
 		addArtist(catalog, bufferArtist)
 		
-		
 	with open(albumFile, encoding=e) as albumF:
 		bufferAlbum = csv.DictReader(albumF, dialect)
 		addAlbum(catalog, bufferAlbum)
@@ -63,7 +62,22 @@ def loadCSVFile(albumFile, artistFile, trackFile, catalog, sep=",", e = "utf-8-s
 #Requerimientos
 #-------------
 
-def r1AlbumsByYear(catalog, year:String):
+def r1AlbumsInYear(catalog, year:String):
 	return model.examAlbumsInYear(catalog, year)
 	
-		
+def r2ArtistByPopularity(catalog, popularity:int):
+	return model.findArtistByPopularity(catalog, popularity)
+
+def r3FindTracksByPopularity(catalog, popularity:int):
+	return model.findTracksByPopularity(catalog, popularity)
+
+def r4TrackMostPopularByArtist(catalog, artist:String, market:String):
+	market = pc.countries.get(name=market).apha_2
+	return model.findArtistMostPopularTrack(catalog, artist, market)
+
+def r5TracksByArtist(catalog, artist):
+	return model.getDiscographyByArtist(catalog, artist)
+
+def r6TracksMostDistributedByArtists(catalog, market:String, artist:String, number:int):
+	market = pc.countries.get(name=market).apha_2
+	return model.clasifyMostDistributedTracks(catalog, artist, market, number)

@@ -75,7 +75,7 @@ def newAlbum():
 		"total_tracks":0,
 		"album_type":"",
 		"external_urls":"",
-		"market":lt.newArrayList("ARRAY_LIST")
+		"market":lt.newList("ARRAY_LIST")
 	}
 	return album
 
@@ -87,7 +87,7 @@ def newTrack():
 		"disc_number":0,
 		"track_number":0,
 		"duration_ms":0,
-		"artist_names":lt.newArrayList(),
+		"artist_names":lt.newList(),
 		"href":""
 	}
 	return track
@@ -148,3 +148,37 @@ def getTrack(catalog, id:String):
 #-------------
 #Requeriments
 #-------------
+def examAlbumsInYear(catalog, year):
+	totalAlbums=0
+	firstMonthAlbums=0
+	threeFirstLast=lt.newList("ARRAY_LIST")
+	return (totalAlbums, firstMonthAlbums, threeFirstLast)
+
+def findArtistByPopularity(catalog, popularity):
+	artist=0
+	threeFirstLast=lt.newList("ARRAY_LIST")
+	return (artist, threeFirstLast)
+
+def findTracksByPopularity(catalog, popularity):
+	tracks=0
+	threeFirstLast=lt.newList("ARRAY_LIST")
+	return (tracks,threeFirstLast)
+
+def findArtistMostPopularTrack(catalog, artist, market):
+	tracksArtistMarket=0
+	albumsArtistMarket=0
+	mostPopular=None
+	return (tracksArtistMarket,albumsArtistMarket)
+
+def getDiscographyByArtist(catalog, artist):
+	singles=0
+	compilations=0
+	albums=0
+	threeFirstLast=lt.newList("ARRAY_LIST")
+	mostPopular=None
+	return (singles,compilations,albums,threeFirstLast,mostPopular)
+
+def clasifyMostDistributedTracks(catalog, artist, market, number):
+	mostCountedMarket=lt.newList("ARRAY_LIST")
+	threeFirstLast=lt.newList("ARRAY_LIST")
+	return (mostCountedMarket, threeFirstLast)
