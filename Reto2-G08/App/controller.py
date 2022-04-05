@@ -40,6 +40,15 @@ def loadCatalog(dataFiles, catalog):
 def loadCSVFile(albumFile, artistFile, trackFile, sep=",", e = "utf-8-sig"):
 	dialect = csv.excel()
 	dialect.delimiter = sep
-	with open(albumFile, encoding=e) as albumF, open(artistFile, encoding=e) as artistF, open(trackFile, encoding=e) as trackF:
 	
+	with open(artistFile, encoding=e) as artistF:
+		bufferArtist = csv.DictReader(artistF, dialect)
+		
+		
+	with open(albumFile, encoding=e) as albumF:
+		bufferAlbum = csv.DictReader(albumF, dialect)
+
 	
+	with open(trackFile, encoding=e) as trackF:
+		bufferTrack = csv.DictReader(trackF, dialect)
+		
