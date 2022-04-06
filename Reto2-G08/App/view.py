@@ -55,7 +55,7 @@ while True:
 		print("Cargando información de los archivos ....")
 		t1Start = process_time()
 		catalog = controller.initCatalog()
-		controller.loadCatalog(file[0], catalog)
+		controller.loadCatalog(file[1], catalog)
 		t1End = process_time()
 		print("\nTiempo de ejecucion:",t1End-t1Start,"segundos")
 	

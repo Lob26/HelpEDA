@@ -61,7 +61,9 @@ def newArtist():
 		"track_id":"",
 		"relevant_track_name":"",
 		"genres":lt.newList("ARRAY_LIST"),
-		"tracks":lt.newList("ARRAY_LIST")
+		"singles":lt.newList("ARRAY_LIST"),
+		"compilations":lt.newList("ARRAY_LIST"),
+		"albums":lt.newList("ARRAY_LIST")
 	}
 	return artist
 
@@ -105,14 +107,15 @@ def addArtist(catalog, arData):
 	artist["followers"] = int(float(arData["followers"]))
 	artist["track_id"] = arData["track_id"]
 	genres = parseList(arData["genres"])
-	for genre in genres:
-		lt.addLast(artist["genres"], genre)
+	if type(genres) == str:
+		lt.addLast(artist["genres"], genres)
+	else:
+		for genre in genres:
+			lt.addLast(artist["genres"], genre)
 
 	mp.put(catalog["artists"], arData["id"], artist)
 
 def addAlbum(catalog, alData):
-	"""
-		"market":lt.newList("ARRAY_LIST")"""
 	album = newAlbum()
 	album["name"] = alData["name"]
 	album["release_date"] = cleanDate(alData["release_date"], alData["release_date_precision"])
@@ -122,8 +125,12 @@ def addAlbum(catalog, alData):
 	album["album_type"] = alData["album_type"]
 	album["external_urls"] = parseList(alData["external_urls"])
 	markets = parseList(alData["available_markets"])
-	for market in markets:
-		lt.addLast(album["market"], market)
+	if type(markets) == str:
+		lt.addLast(album["market"], markets)
+	else:
+		for market in markets:
+			lt.addLast(album["market"], market)
+	mp.put(catalog["albums"], alData["id"], album)
 	
 def addTrack(catalog, trData):
 	track = newTrack()
@@ -133,12 +140,66 @@ def addTrack(catalog, trData):
 	track["disc_number"] = int(float(trData["disc_number"]))
 	track["duration_ms"] = int(float(trData["duration_ms"]))
 	artists = parseList(trData["artists_id"])
-	for artist in artists:
-		lt.addLast(track["artists_id"], artist)
+	if type(artists) == str:
+		lt.addLast(track["artists_id"], artists)
+	else:
+		for artist in artists:
+			lt.addLast(track["artists_id"], artist)
 	track["href"] = trData["href"]
+	mp.put(catalog["tracks"], trData["id"], track)
 
 def purify(catalog):
-	pass
+	purifyTracks(catalog)
+	purifyAlbums(catalog)
+	purifyArtists(catalog)
+	
+def purifyTracks(catalog):
+	keys = mp.keySet(catalog["tracks"])
+	for id in range(lt.size(keys)):
+		keyId = lt.getElement(keys, id)
+		track = getTrack(catalog, keyId)
+		tempAlb = getAlbum(catalog, track["album_id"])
+		track["album_name"] = "" if tempAlb in (None, "") else tempAlb["name"]
+		
+		lt.addLast(tempAlb["tracks_name"],track["name"])
+		mp.put(catalog["albums"], track["album_id"], tempAlb)
+		
+		listId = track["artists_id"]
+		for i in range(lt.size(listId)):
+			artistId = lt.getElement(listId, i)
+			tempArt = getArtist(catalog, artistId)
+			if tempArt in (None, ""):
+				artist = ""
+			else:
+				artist = tempArt["name"]
+				type = tempAlb["album_type"]
+				if type == "single":
+					lt.addLast(artist["single"],track["name"])
+				elif type == "compilation":
+					lt.addLast(artist["compilation"],track["name"])
+				else:
+					lt.addLast(artist["albums"],track["name"])
+				mp.put(catalog["artists"], artistId, tempArt)
+			lt.addLast(track["artists_name"], artist)
+		mp.put(catalog["tracks"], keyId, track)
+
+def purifyAlbums(catalog):
+	keys = mp.keySet(catalog["albums"])
+	for id in range(lt.size(keys)):
+		keyId = lt.getElement(keys, id)
+		album = getAlbum(catalog, keyId)
+		tempArt = getArtist(catalog, album["artist_id"])
+		album["artist_name"] = "" if tempArt in (None, "") else tempArt["name"]
+		mp.put(catalog["albums"], keyId, album)
+
+def purifyArtists(catalog):
+	keys = mp.keySet(catalog["artists"])
+	for id in range(lt.size(keys)):
+		keyId = lt.getElement(keys, id)
+		artist = getArtist(catalog, keyId)
+		tempTra = getTrack(catalog, artist["track_id"])
+		artist["relevant_track_name"] = "" if tempTra in (None, "") else tempTra["name"]
+			
 #-------------
 #Helper
 #-------------
@@ -157,13 +218,22 @@ def parseList(var):
 #Getters
 #-------------
 def getAlbum(catalog, id):
-	return me.getValue(mp.get(catalog["albums"], id))
+	tempAlbum = mp.get(catalog["albums"], id)
+	if tempAlbum is not None:
+		return me.getValue(tempAlbum)
+	return ""
 
 def getArtist(catalog, id):
-	return me.getValue(mp.get(catalog["artists"], id))
+	tempArtist = mp.get(catalog["artists"], id)
+	if tempArtist is not None:
+		return me.getValue(tempArtist)
+	return ""
 
 def getTrack(catalog, id):
-	return me.getValue(mp.get(catalog["tracks"], id))
+	tempTrack = mp.get(catalog["tracks"], id)
+	if tempTrack is not None:
+		return me.getValue(tempTrack)
+	return ""
 
 #-------------
 #Requeriments
