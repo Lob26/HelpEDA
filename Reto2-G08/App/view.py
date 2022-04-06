@@ -42,41 +42,39 @@ def printMenu():
 
 catalog = None
 filePrefix = ("spotify-albums-utf8", "spotify-artists-utf8" , "spotify-tracks-utf8")
-fileSize = ("-small", "-large", "-5pct", "-10pct", "-20pct", "-30pct", "-50pct", "-80pct")
+fileSize = ("-01pct.csv","-small.csv", "-large.csv", "-5pct.csv", "-10pct.csv", "-20pct.csv", "-30pct.csv", "-50pct.csv", "-80pct.csv")
 file = [[f'{prefix}{size}' for prefix in filePrefix] for size in fileSize]
 
 """
 Menu principal
 """
 while True:
-    printMenu()
-    inputs = input('Seleccione una opción para continuar\n')
-    if int(inputs[0]) == 1:
-				print("Cargando información de los archivos ....")
-				t1Start = process_time()
-				catalog = controller.initCatalogo()
-				controller.loadCatalog(file[0], catalog)
-				t1End = process_time()
-				print ("\nTiempo de ejecucion:", t1_stop-t1_start,"segundos")
-
-    elif int(inputs[0]) == 2:
-        year = input("Ingrese el anio de interes")
-				if (len(year)!=4):
-					print("Anio incorrecto")
-				else:
-					first(year)
-		elif int(inputs[0] == 3):
-
-		elif int(inputs[0] == 4):
-
-		elif int(inputs[0] == 5):
-
-		elif int(inputs[0] == 6):
-
-		elif int(inputs[0] == 7):
-		
-    else:
-        sys.exit(0)
+	printMenu()
+	inputs = input('Seleccione una opción para continuar\n')
+	if int(inputs[0]) == 1:
+		print("Cargando información de los archivos ....")
+		t1Start = process_time()
+		catalog = controller.initCatalog()
+		controller.loadCatalog(file[0], catalog)
+		t1End = process_time()
+		print("\nTiempo de ejecucion:",t1End-t1Start,"segundos")
+	
+	elif int(inputs[0]) == 2:
+		year = input("Ingrese el anio de interes")
+		if (len(year)!= 4):
+			print("Anio incorrecto")
+		else:
+			first(year)
+	elif int(inputs[0]) == 3:
+		pass
+	elif int(inputs[0]) == 4:
+		pass
+	elif int(inputs[0]) == 5:
+		pass
+	elif int(inputs[0]) == 6:
+		pass
+	else:
+		sys.exit(0)
 sys.exit(0)
 
 def first(year):

@@ -25,16 +25,15 @@
  """
 
 
+from time import strptime
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 assert cf
-from datetime import datetime as newDateTime
-from datetime import strftime as getDate
-from datetime import strptime as parseDate
-from json import loads as parseList
+from datetime import datetime 
+from json import loads
 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
@@ -45,10 +44,10 @@ los mismos.
 #-------------
 def newCatalog():
 	catalog = {
-		"tracks" = None,
-		"artists" = None,
-		"albums" = None,
-	}
+        "tracks": None,
+		"artists": None,
+		"albums": None,
+	            }
 	catalog["tracks"] = mp.newMap()
 	catalog["artists"] = mp.newMap()
 	catalog["albums"] = mp.newMap()
@@ -57,8 +56,9 @@ def newCatalog():
 def newArtist():
 	artist={
 		"name":"",
-		"artist_popularity":0,
+		"artist_popularity":0.0,
 		"followers":0,
+		"track_id":"",
 		"relevant_track_name":"",
 		"genres":lt.newList("ARRAY_LIST"),
 		"tracks":lt.newList("ARRAY_LIST")
@@ -69,8 +69,10 @@ def newAlbum():
 	album = {
 		"name":"",
 		"release_date":None,
+		"track_id":"",
 		"relevant_track_name":"",
 		"tracks_name":lt.newList("ARRAY_LIST"),
+		"artist_id":"",
 		"artist_album_name":"",
 		"total_tracks":0,
 		"album_type":"",
@@ -83,67 +85,85 @@ def newTrack():
 	track={
 		"name":"",
 		"popularity":0,
+		"album_id":"",
 		"album_name":"",
 		"disc_number":0,
 		"track_number":0,
 		"duration_ms":0,
-		"artist_names":lt.newList(),
+		"artists_id":lt.newList(),
+		"artists_name":lt.newList(),
 		"href":""
 	}
 	return track
 #-------------
 #Loader
 #-------------
-def addArtist(catalog, data:dict):
+def addArtist(catalog, arData):
 	artist = newArtist()
-	artist.update(data)
-	artist["genres"] = parseList(data["genres"])
-	mp.put(catalog["artist"], data["id"], artist)
+	artist["name"] = arData["name"]
+	artist["artist_popularity"] = float(arData["artist_popularity"])
+	artist["followers"] = int(float(arData["followers"]))
+	artist["track_id"] = arData["track_id"]
+	genres = parseList(arData["genres"])
+	for genre in genres:
+		lt.addLast(artist["genres"], genre)
 
-def addAlbum(catalog, data:dict):
+	mp.put(catalog["artists"], arData["id"], artist)
+
+def addAlbum(catalog, alData):
+	"""
+		"market":lt.newList("ARRAY_LIST")"""
 	album = newAlbum()
-	album.update(data)
-	album["artist_album_name"] = getArtist(catalog, data["artist_id"])
-	album["relevant_track_name"] = getTrack(catalog, data["track_id"])
-	album["release_date"] = cleanDate(date["release_date"], date["release_date_precision"])
-	listMarket = parseList(data["available_markets"])
-	for market in listMarket:
+	album["name"] = alData["name"]
+	album["release_date"] = cleanDate(alData["release_date"], alData["release_date_precision"])
+	album["track_id"] = alData["track_id"]
+	album["artist_id"] = alData["artist_id"]
+	album["total_tracks"] = int(float(alData["total_tracks"]))
+	album["album_type"] = alData["album_type"]
+	album["external_urls"] = parseList(alData["external_urls"])
+	markets = parseList(alData["available_markets"])
+	for market in markets:
 		lt.addLast(album["market"], market)
-	mp.put(catalog["albums"], data["id"], album)
-
-def addTrack(catalog, data:dict):
+	
+def addTrack(catalog, trData):
 	track = newTrack()
-	track.update(data)
-	track["album_name"] = getAlbum(catalog, data["album_id"])["name"]
-	lt.addLast(getAlbum(catalog, data["album_id"])["tracks_name"], track["name"])
-	listArtists = parseList(data["arist_id"])
-	for artistId in listArtits:
-		artist = getArtist(catalog, artistId)
-		lt.addLast(artist["tracks"], track["name"])
-		lt.addLast(track["artist_names"], artist["name"])
-	mp.put(catalog["tracks"], data["id"], track)
+	track["name"] = trData["name"]
+	track["popularity"] = float(trData["popularity"])
+	track["album_id"] = trData["album_id"]
+	track["disc_number"] = int(float(trData["disc_number"]))
+	track["duration_ms"] = int(float(trData["duration_ms"]))
+	artists = parseList(trData["artists_id"])
+	for artist in artists:
+		lt.addLast(track["artists_id"], artist)
+	track["href"] = trData["href"]
 
+def purify(catalog):
+	pass
 #-------------
 #Helper
 #-------------
-def cleanDate(date:String, precision:String):
-	if(precision=="month"):
+def cleanDate(date, precision):
+	if(precision=="year"):
 		date+="-01-01"
-	if(precision=="day"):
+	if(precision=="month"):
 		date+="-01"
-	return parseDate(date, "%Y-%m-%d")
+	return datetime.strptime(date, "%Y-%m-%d")
 
+def parseList(var):
+	var = f'"{var}"'
+	return loads(var)
+    
 #-------------
 #Getters
 #-------------
-def getAlbum(catalog, id:String):
-	return mp.get(catalog["albums"], id)
+def getAlbum(catalog, id):
+	return me.getValue(mp.get(catalog["albums"], id))
 
-def getArtist(catalog, id:String):
-	return mp.get(catalog["artists"], id)
+def getArtist(catalog, id):
+	return me.getValue(mp.get(catalog["artists"], id))
 
-def getTrack(catalog, id:String):
-	return mp.get(catalog["tracks"], id)
+def getTrack(catalog, id):
+	return me.getValue(mp.get(catalog["tracks"], id))
 
 #-------------
 #Requeriments

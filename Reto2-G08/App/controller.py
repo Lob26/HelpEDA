@@ -23,6 +23,8 @@
 import config as cf
 import model
 import csv
+import os#Por repl.it
+os.system("pip install pycountry")#Por repl.it
 import pycountry as pc
 
 """
@@ -43,26 +45,33 @@ def loadCatalog(dataFiles, catalog):
 	loadCSVFile(albums, artists, tracks, catalog)
 
 def loadCSVFile(albumFile, artistFile, trackFile, catalog, sep=",", e = "utf-8-sig"):
-	dialect = csv.excel()
-	dialect.delimiter = sep
+
+	albumFile = cf.data_dir + albumFile
+	artistFile = cf.data_dir + artistFile
+	trackFile = cf.data_dir + trackFile
 	
 	with open(artistFile, encoding=e) as artistF:
-		bufferArtist = csv.DictReader(artistF, dialect)
-		addArtist(catalog, bufferArtist)
-		
-	with open(albumFile, encoding=e) as albumF:
-		bufferAlbum = csv.DictReader(albumF, dialect)
-		addAlbum(catalog, bufferAlbum)
+		bufferArtist = csv.DictReader(artistF)
+		for artist in bufferArtist:
+			model.addArtist(catalog, artist)
 	
 	with open(trackFile, encoding=e) as trackF:
-		bufferTrack = csv.DictReader(trackF, dialect)
-		addTrack(catalog, bufferTrack)
+		bufferTrack = csv.DictReader(trackF)
+		for track in bufferTrack:
+			model.addTrack(catalog, track)
+		
+	with open(albumFile, encoding=e) as albumF:
+		bufferAlbum = csv.DictReader(albumF)
+		for album in bufferAlbum:
+			model.addAlbum(catalog, album)
 
+	model.purify(catalog)
+	
 #-------------
 #Requerimientos
 #-------------
 
-def r1AlbumsInYear(catalog, year:String):
+def r1AlbumsInYear(catalog, year):
 	return model.examAlbumsInYear(catalog, year)
 	
 def r2ArtistByPopularity(catalog, popularity:int):
@@ -71,13 +80,13 @@ def r2ArtistByPopularity(catalog, popularity:int):
 def r3FindTracksByPopularity(catalog, popularity:int):
 	return model.findTracksByPopularity(catalog, popularity)
 
-def r4TrackMostPopularByArtist(catalog, artist:String, market:String):
+def r4TrackMostPopularByArtist(catalog, artist, market):
 	market = pc.countries.get(name=market).apha_2
 	return model.findArtistMostPopularTrack(catalog, artist, market)
 
 def r5TracksByArtist(catalog, artist):
 	return model.getDiscographyByArtist(catalog, artist)
 
-def r6TracksMostDistributedByArtists(catalog, market:String, artist:String, number:int):
+def r6TracksMostDistributedByArtists(catalog, market, artist, number:int):
 	market = pc.countries.get(name=market).apha_2
 	return model.clasifyMostDistributedTracks(catalog, artist, market, number)
