@@ -22,7 +22,7 @@
 
 import config as cf
 import sys
-import controller
+import controller as cnt
 from DISClib.ADT import list as lt
 assert cf
 
@@ -40,6 +40,7 @@ def printMenu():
     print("2- ")
 
 catalog = None
+file = cf.data_dir+"fifa-players-2022-utf8-small.csv"
 
 """
 Menu principal
@@ -49,6 +50,8 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
+        catalog = cnt.newCatalog()
+        cnt.loadCatalog(file, catalog)
 
     elif int(inputs[0]) == 2:
         pass

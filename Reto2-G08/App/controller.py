@@ -71,22 +71,15 @@ def loadCSVFile(albumFile, artistFile, trackFile, catalog, sep=",", e = "utf-8-s
 #Requerimientos
 #-------------
 
-def r1AlbumsInYear(catalog, year):
-	return model.examAlbumsInYear(catalog, year)
-	
-def r2ArtistByPopularity(catalog, popularity:int):
-	return model.findArtistByPopularity(catalog, popularity)
-
-def r3FindTracksByPopularity(catalog, popularity:int):
-	return model.findTracksByPopularity(catalog, popularity)
-
-def r4TrackMostPopularByArtist(catalog, artist, market):
-	market = pc.countries.get(name=market).apha_2
-	return model.findArtistMostPopularTrack(catalog, artist, market)
-
 def r5TracksByArtist(catalog, artist):
+	artist = model.getNameArtist(catalog, artist)
+	if artist in (None, ""):
+		return "     "
 	return model.getDiscographyByArtist(catalog, artist)
 
 def r6TracksMostDistributedByArtists(catalog, market, artist, number:int):
+	artist = model.getNameArtist(catalog, artist)
 	market = pc.countries.get(name=market).apha_2
 	return model.clasifyMostDistributedTracks(catalog, artist, market, number)
+def sizeCatalog(catalog):
+  return model.sizeCatalog(catalog)

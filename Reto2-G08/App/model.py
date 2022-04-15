@@ -47,10 +47,12 @@ def newCatalog():
         "tracks": None,
 		"artists": None,
 		"albums": None,
+		"artId-artName":None
 	            }
 	catalog["tracks"] = mp.newMap()
 	catalog["artists"] = mp.newMap()
 	catalog["albums"] = mp.newMap()
+	catalog["artId-artName"] = mp.newMap()
 	return catalog
 
 def newArtist():
@@ -114,6 +116,7 @@ def addArtist(catalog, arData):
 			lt.addLast(artist["genres"], genre)
 
 	mp.put(catalog["artists"], arData["id"], artist)
+	mp.put(catalog["artId-artName"], arData["name"], arData["id"])
 
 def addAlbum(catalog, alData):
 	album = newAlbum()
@@ -139,12 +142,11 @@ def addTrack(catalog, trData):
 	track["album_id"] = trData["album_id"]
 	track["disc_number"] = int(float(trData["disc_number"]))
 	track["duration_ms"] = int(float(trData["duration_ms"]))
-	artists = parseList(trData["artists_id"])
-	if type(artists) == str:
-		lt.addLast(track["artists_id"], artists)
-	else:
-		for artist in artists:
-			lt.addLast(track["artists_id"], artist)
+	artists = trData["artists_id"].strip('][').replace("'", "").split(", ")
+	for i in range(len(artists)):
+		lt.addLast(track["artists_id"], artists[i])
+
+	
 	track["href"] = trData["href"]
 	mp.put(catalog["tracks"], trData["id"], track)
 
@@ -156,7 +158,7 @@ def purify(catalog):
 def purifyTracks(catalog):
 	keys = mp.keySet(catalog["tracks"])
 	for id in range(lt.size(keys)):
-		keyId = lt.getElement(keys, id)
+		keyId = lt.getElement(keys, id+1)
 		track = getTrack(catalog, keyId)
 		tempAlb = getAlbum(catalog, track["album_id"])
 		track["album_name"] = "" if tempAlb in (None, "") else tempAlb["name"]
@@ -165,7 +167,7 @@ def purifyTracks(catalog):
 		mp.put(catalog["albums"], track["album_id"], tempAlb)
 		
 		listId = track["artists_id"]
-		for i in range(lt.size(listId)):
+		for i in range(1,lt.size(listId)+1):
 			artistId = lt.getElement(listId, i)
 			tempArt = getArtist(catalog, artistId)
 			if tempArt in (None, ""):
@@ -174,11 +176,11 @@ def purifyTracks(catalog):
 				artist = tempArt["name"]
 				type = tempAlb["album_type"]
 				if type == "single":
-					lt.addLast(artist["single"],track["name"])
+					lt.addLast(tempArt["singles"],track["name"])
 				elif type == "compilation":
-					lt.addLast(artist["compilation"],track["name"])
+					lt.addLast(tempArt["compilations"],track["name"])
 				else:
-					lt.addLast(artist["albums"],track["name"])
+					lt.addLast(tempArt["albums"],track["name"])
 				mp.put(catalog["artists"], artistId, tempArt)
 			lt.addLast(track["artists_name"], artist)
 		mp.put(catalog["tracks"], keyId, track)
@@ -186,7 +188,7 @@ def purifyTracks(catalog):
 def purifyAlbums(catalog):
 	keys = mp.keySet(catalog["albums"])
 	for id in range(lt.size(keys)):
-		keyId = lt.getElement(keys, id)
+		keyId = lt.getElement(keys, id+1)
 		album = getAlbum(catalog, keyId)
 		tempArt = getArtist(catalog, album["artist_id"])
 		album["artist_name"] = "" if tempArt in (None, "") else tempArt["name"]
@@ -194,7 +196,7 @@ def purifyAlbums(catalog):
 
 def purifyArtists(catalog):
 	keys = mp.keySet(catalog["artists"])
-	for id in range(lt.size(keys)):
+	for id in range(1,lt.size(keys)+1):
 		keyId = lt.getElement(keys, id)
 		artist = getArtist(catalog, keyId)
 		tempTra = getTrack(catalog, artist["track_id"])
@@ -213,6 +215,12 @@ def cleanDate(date, precision):
 def parseList(var):
 	var = f'"{var}"'
 	return loads(var)
+
+def getNameArtist(catalog, name):
+	dictArt = mp.get(catalog["artId-artName"], name)
+	return me.getValue(dictArt) if dictArt != None else ""
+def sizeCatalog(catalog):
+  return mp.size(catalog)
     
 #-------------
 #Getters
@@ -238,37 +246,12 @@ def getTrack(catalog, id):
 #-------------
 #Requeriments
 #-------------
-def examAlbumsInYear(catalog, year):
-	totalAlbums=0
-	firstMonthAlbums=0
-	threeFirstLast=lt.newList("ARRAY_LIST")
-	return (totalAlbums, firstMonthAlbums, threeFirstLast)
-
-def findArtistByPopularity(catalog, popularity):
-	artist=0
-	threeFirstLast=lt.newList("ARRAY_LIST")
-	return (artist, threeFirstLast)
-
-def findTracksByPopularity(catalog, popularity):
-	tracks=0
-	threeFirstLast=lt.newList("ARRAY_LIST")
-	return (tracks, threeFirstLast)
-
-def findArtistMostPopularTrack(catalog, artist, market):
-	tracksArtistMarket=0
-	albumsArtistMarket=0
-	mostPopular=None
-	return (tracksArtistMarket, albumsArtistMarket)
 
 def getDiscographyByArtist(catalog, artist):
-	singles=0
-	compilations=0
-	albums=0
+	artist = getArtist(catalog, artist)
+	singles=lt.size(artist["singles"])
+	compilations=lt.size(artist["compilations"])
+	albums=lt.size(artist["albums"])
 	threeFirstLast=lt.newList("ARRAY_LIST")
 	mostPopular=None
 	return (singles,compilations, albums,threeFirstLast, mostPopular)
-
-def clasifyMostDistributedTracks(catalog, artist, market, number):
-	mostCountedMarket=lt.newList("ARRAY_LIST")
-	threeFirstLast=lt.newList("ARRAY_LIST")
-	return (mostCountedMarket, threeFirstLast)

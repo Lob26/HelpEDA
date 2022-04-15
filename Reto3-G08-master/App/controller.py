@@ -21,18 +21,25 @@
  """
 
 import config as cf
-import model
+import model as mdl
 import csv
 
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
 """
+#-------------
+#	Iniciar catalogo
+#-------------
+def newCatalog():
+	catalog = mdl.newCatalog()
+	return catalog
 
-# Inicialización del Catálogo de libros
-
-# Funciones para la carga de datos
-
-# Funciones de ordenamiento
-
-# Funciones de consulta sobre el catálogo
+#-------------
+# Cargar catalogo
+#-------------
+def loadCatalog(dataFile, catalog, e = "utf-8-sig"):
+  with open(dataFile,encoding=e) as playersF:
+    buffer = csv.DictReader(playersF)
+    for player in buffer:
+      mdl.addData(catalog, player)
