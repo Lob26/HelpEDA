@@ -52,6 +52,7 @@ while True:
         print("Cargando información de los archivos ....")
         catalog = cnt.newCatalog()
         cnt.loadCatalog(file, catalog)
+        print("PREPARESE HIJO DE LA RE CHINGADA, PORQUE EL CATALOGO HA SIDO CARGADO EXITOSAMENTE")
 
     elif int(inputs[0]) == 2:
         pass
